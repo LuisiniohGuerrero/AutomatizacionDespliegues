@@ -4,6 +4,7 @@ Vagrant.configure("2") do |config|
     config.vm.define "ubuntu_vm" do |ubuntu|
       ubuntu.vm.box = "bento/ubuntu-20.04"
       ubuntu.vm.hostname = "wordpress-ubuntu"
+      ubuntu.vm.network "forwarded_port", guest: 80, host: 8080
       ubuntu.vm.network "private_network", ip: "192.168.56.101"
       ubuntu.vm.provider "virtualbox" do |vb|
         vb.memory = 1024

@@ -1,24 +1,23 @@
 #!/bin/bash
 
-# Variables
-MYSQL_ROOT_PASSWORD="root_password"
-MYSQL_USER="wordpress_user"
-MYSQL_PASSWORD="password"
-
-# Actualizar paquetes
-apt-get update
-
 # Instalar MySQL Server
-DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
+apt-get update
+apt-get install -y mysql-server
 
-# Configuración de MySQL
-systemctl enable mysql
-systemctl start mysql
+# Contraseña de root
+root_password="root_password"
 
-# Crear usuario y base de datos para WordPress
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS wordpress;"
-mysql -u root -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-mysql -u root -e "GRANT ALL PRIVILEGES ON wordpress.* TO '${MYSQL_USER}'@'localhost';"
-mysql -u root -e "FLUSH PRIVILEGES;"
+# Asegurarse de que el usuario root utilice mysql_native_password
+mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${root_password}'; FLUSH PRIVILEGES;"
 
-echo "MySQL instalado y configurado correctamente."
+# Crear base de datos de WordPress si no existe
+mysql -u root -p${root_password} -e "CREATE DATABASE IF NOT EXISTS wordpress;"
+
+# Crear usuario wordpress_user si no existe
+mysql -u root -p${root_password} -e "CREATE USER IF NOT EXISTS 'wordpress_user'@'localhost' IDENTIFIED BY 'password';"
+
+# Permisos al usuario wordpress_user sobre la base de datos wordpress
+mysql -u root -p${root_password} -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress_user'@'localhost'; FLUSH PRIVILEGES;"
+
+# Reiniciar MySQL para aplicar configuraciones
+systemctl restart mysql

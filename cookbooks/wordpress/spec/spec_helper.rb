@@ -1,8 +1,5 @@
-require 'chefspec'
-require 'chefspec/policyfile'
+# spec/spec_helper.rb
 
-# Configuración para la versión de Chef que estás usando
-RSpec.configure do |config|
-  config.platform = 'ubuntu'
-  config.version = '20.04'
-end
+require 'chefspec'
+require 'chefspec/berkshelf'
+require 'rspec/core'          # Asegúrate de que RSpec está siendo cargado
